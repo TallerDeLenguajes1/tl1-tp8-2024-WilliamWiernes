@@ -1,81 +1,86 @@
-﻿// Listas
-var ListaTareasPendientes = new List<Tarea>();
-var ListaTareasRealizadas = new List<Tarea>();
+﻿using EspacioCalculadora;
 
-// Número aleatorio de tareas
-var Aleatorio = new Random();
-var NumRan = Aleatorio.Next(1, 11); // 1 a 10 tareas
+Calculadora calcN = new Calculadora();
 
-for (int i = 0; i < NumRan; i++)
+int continuar = 1, opcion;
+double termino;
+
+while (continuar == 1)
 {
-    var Tarea = new Tarea();
-    var Duracion = Aleatorio.Next(10, 101);
+    opcion = Menu();
 
-    Tarea.TareaID = i;
-    Tarea.Descripcion = $"Descripción {i}.";
-    Tarea.Duracion = Duracion;
-
-    ListaTareasPendientes.Add(Tarea);
-}
-
-// Interfaz para mover las tareas pendientes a realizadas
-Console.WriteLine("Interfaz marcar Tarea Pendiente como Realizada:");
-Console.WriteLine("Lista de Tareas Pendientes:");
-foreach (var Tarea in ListaTareasPendientes)
-{
-    Tarea.MostrarTarea();
-}
-
-int SeleccionID;
-Console.Write("Seleccione el ID de la Tarea que desea marcar como Realizada: ");
-if (int.TryParse(Console.ReadLine(), out SeleccionID)) // Si la entrada es correcta
-{
-    var TareaBusqID = ListaTareasPendientes.Find(t => t.TareaID == SeleccionID); // Busco la tarea
-
-    if (TareaBusqID != null) // Si encuentro la tarea
+    switch (opcion)
     {
-        ListaTareasRealizadas.Add(TareaBusqID);
-        ListaTareasPendientes.Remove(TareaBusqID);
-
-        Console.WriteLine($"La tarea con ID '{SeleccionID}' ha sido marcada como realizada.");
+        case 1:
+            termino = TerminoCorrecto();
+            calcN.Sumar(termino);
+            Console.WriteLine($"\nResultado de la suma: {calcN.Resultado}");
+            break;
+        case 2:
+            termino = TerminoCorrecto();
+            calcN.Restar(termino);
+            Console.WriteLine($"\nResultado de la resta: {calcN.Resultado}");
+            break;
+        case 3:
+            termino = TerminoCorrecto();
+            calcN.Multiplicar(termino);
+            Console.WriteLine($"\nResultado de la multiplicación: {calcN.Resultado}");
+            break;
+        case 4:
+            termino = TerminoCorrecto();
+            calcN.Dividir(termino);
+            Console.WriteLine($"\nResultado de la división: {calcN.Resultado}");
+            break;
+        case 5:
+            calcN.Limpiar();
+            Console.WriteLine("\nLimpiado");
+            break;
+        default:
+            Console.WriteLine("\nOpción no reconocida");
+            break;
     }
-    else
+
+    do
     {
-        Console.WriteLine($"La tarea con ID '{SeleccionID}' no se pudo encontrar.");
-    }
-}
-else
-{
-    Console.WriteLine("Entrada no válida.");
+        Console.Write("\nDesea realizar otra operación? [0] => NO [1] => SI: ");
+    } while (!int.TryParse(Console.ReadLine(), out continuar) || (continuar != 0 && continuar != 1));
 }
 
-Console.WriteLine("Lista de Tareas Pendientes:");
-foreach (var Tarea in ListaTareasPendientes)
+// Mostrando historial de operaciones
+Console.WriteLine("\nHistorial de Operaciones realizadas:");
+foreach(var operacion in calcN.ListaHistorialOperaciones)
 {
-    Tarea.MostrarTarea();
+    Console.WriteLine($"\nResultado Anterior: {operacion.ResultadoAnterior}");
+    Console.WriteLine($"Nuevo Valor: {operacion.NuevoValor}");
+    Console.WriteLine($"Tipo de Operación: {operacion.Operacion1}");
 }
 
-Console.WriteLine("Lista de Tareas Realizadas:");
-foreach (var Tarea in ListaTareasRealizadas)
+static int Menu()
 {
-    Tarea.MostrarTarea();
+    int opcion;
+
+    Console.WriteLine("\n1. Sumar");
+    Console.WriteLine("2. Restar");
+    Console.WriteLine("3. Multiplicar");
+    Console.WriteLine("4. Dividir");
+    Console.WriteLine("5. Limpiar");
+
+    do
+    {
+        Console.Write("Opción: ");
+    } while (!int.TryParse(Console.ReadLine(), out opcion));
+
+    return opcion;
 }
 
-// Interfaz buscar tareas pendientes por descripción;
-Console.WriteLine("");
-string BusquedaDesc;
-
-Console.WriteLine("Intefaz buscar Tarea Pendiente por Descripción:");
-Console.Write("Ingrese su búsqueda: ");
-BusquedaDesc = Console.ReadLine();
-
-var TareaBusqDesc = ListaTareasPendientes.Find(t => t.Descripcion == BusquedaDesc); // Busco la tarea
-
-if (TareaBusqDesc != null) // Si encuentro la tarea
+static double TerminoCorrecto()
 {
-    TareaBusqDesc.MostrarTarea();
-}
-else
-{
-    Console.WriteLine($"La tarea con Descripción '{BusquedaDesc}' no se pudo encontrar.");
+    double termino;
+
+    do
+    {
+        Console.Write("\nIngrese un número: ");
+    } while (!double.TryParse(Console.ReadLine(), out termino));
+
+    return termino;
 }
